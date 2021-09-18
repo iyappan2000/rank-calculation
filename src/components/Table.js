@@ -56,16 +56,38 @@ function Table({ details, deleteDetails, addDetails }) {
   //     },
   //   ];
   const [Name, setName] = useState("");
-  const [Tamil, setTamil] = useState(0);
-  const [English, setEnglish] = useState(0);
-  const [Maths, SetMaths] = useState(0);
-  const [Science, setScience] = useState(0);
-  const [SSS, setS_Science] = useState(0);
-  const [Rank, setRank] = useState();
+  const [Tamil, setTamil] = useState();
+  const [English, setEnglish] = useState();
+  const [Maths, SetMaths] = useState();
+  const [Science, setScience] = useState();
+  const [SSS, setS_Science] = useState();
+  const [Rank, setRank] = useState(null);
   const [Result, setResult] = useState("Fail");
   const [Total, setTotal] = useState(Tamil + English + Maths + Science + SSS);
+  const totalValue = () => {
+    setTotal(Tamil + English + Maths + Science + SSS);
+  };
+
+  var arrayRankTransform = (arr) => {
+    const sorted = [...arr].sort((a, b) => b - a);
+    return arr.map((x) => sorted.indexOf(x) + 1);
+  };
+  var Values = details.map((detail) => detail.Total);
+  console.log(Values);
+  const ranks = arrayRankTransform(Values);
+
+  //   const value = Values.array.forEach((element) => {});
+  //   console.log(value);
   const submitHandler = (e) => {
     e.preventDefault();
+    // setTotal({
+    //   total:
+    //     parseInt(Tamil) +
+    //     parseInt(English) +
+    //     parseInt(Maths) +
+    //     parseInt(Science) +
+    //     parseInt(SSS),
+    // });
     addDetails({
       Name,
       Tamil,
@@ -77,15 +99,34 @@ function Table({ details, deleteDetails, addDetails }) {
       Rank,
       Result,
     });
-    setTotal(Tamil + English + Maths + Science + SSS);
+    for (const rank of ranks) {
+      console.log(rank);
+      setRank(rank);
+    }
+    // totalValue(Total);
+    // var Values = details.map((detail) => detail.Total);
+    // var arr = [Values];
+    // var sorted = arr.slice().sort(function (a, b) {
+    //   return b - a;
+    // });
+    // var ranks = arr.map(function (v) {
+    //   return sorted.indexOf(v) + 1;
+    // });
+
     setName("");
     setTamil("");
     SetMaths("");
     setEnglish("");
     setScience("");
     setS_Science("");
-    setRank(details.length);
-    setResult(Tamil, English, Maths, Science, SSS >= 35 ? "Pass" : "Fail");
+
+    totalValue();
+
+    setResult(
+      Tamil >= 35 && English >= 35 && Maths >= 35 && Science >= 35 && SSS >= 35
+        ? "Pass"
+        : "Fail"
+    );
   };
   return (
     <div>
@@ -119,7 +160,11 @@ function Table({ details, deleteDetails, addDetails }) {
               <td>{detail.Rank}</td>
               <td>{detail.Result}</td>
               <td className="delIcon">
-                <button onClick={() => deleteDetails(detail.id)}>
+                <button
+                  type="button"
+                  onClick={() => deleteDetails(detail.id)}
+                  style={{ border: "none" }}
+                >
                   <AiFillDelete />
                 </button>
               </td>{" "}
@@ -188,17 +233,23 @@ function Table({ details, deleteDetails, addDetails }) {
               />
             </td>
             <td>
-              {" "}
-              <input />
+              <input style={{ width: "80px" }} />
             </td>
             <td></td>
             <td></td>
             <td>
-              <button onClick={submitHandler}>Add</button>
+              <button onClick={submitHandler} style={{ border: "none" }}>
+                Add
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <p style={{ color: "red", marginTop: "200px" }}>
+        Total Value and ranking and result value also added in next line that is
+        the error
+      </p>
     </div>
   );
 }
@@ -212,6 +263,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   addDetails: (data) => {
     dispatch({ type: "ADD_DETAILS", payload: data });
+  },
+  totalValue: (a, total) => {
+    dispatch({ type: "TOTAL", payload: total, a });
   },
 });
 

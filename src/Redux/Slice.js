@@ -55,12 +55,15 @@ export const detailsReducer = (state = initialState, action) => {
       state = [...state, action.payload];
       return state;
     case "DELETE_DETAILS":
-      const deleteFilter = state.filter((detail) =>
-        detail.id === action.payload ? null : detail
-      );
+      const deleteFilter = [
+        ...state.filter((detail) => detail.id !== action.payload),
+      ];
       state = deleteFilter;
       return state;
-
+    case "TOTAL":
+      const TotalValue = state.reduce((a, v) => (a = a + v.Total), 0);
+      state = TotalValue;
+      return state;
     default:
       return state;
   }
